@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README</title>
+
+<style>
+        .copy {
+            max-width: 700px; font-family: sans-serif; margin: 0 auto; line-height: 1.5;
+        }
+        pre {
+            background-color: #eee;
+            padding: 1em;
+            overflow: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table+table {
+            margin-top: 2em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.5em;
+            vertical-align: top;
+        }
+        td:first-child {
+            width: 170px;
+        }
+        td code {
+            white-space: nowrap;
+        }
+        samp {
+            color: rgb(110, 110, 110);
+        }
+</style>
+</head>
+<body>
+<div class="copy">
+<h1>README</h1>
+<h2>Описание приложения</h2>
+<p>Это шаблон приложения API на языке программирования Go, созданный для облегчения старта разработки. Ниже предоставлено краткое описание основных компонентов приложения:</p>
+<h2>Начало работы</h2>
+<p>Убедитесь, что вы находитесь в корневой директории проекта, получите зависимости с помощью <code>go mod tidy</code>, затем запустите приложение с использованием <code>go run ./cmd/api</code>:</p>
+<pre>
+$ go mod tidy
+$ go run ./cmd/api
+</pre>
+<p>Если вы выполняете запрос к конечной точке <code>GET /status</code> с помощью <code>curl</code>, вы должны получить ответ, подобный следующему:</p>
+<pre>
+$ curl -i localhost:4444/status
+<samp>HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Mon, 09 May 2022 20:46:37 GMT
+Content-Length: 23
+
+{
+    "Status": "OK",
+}</samp></pre>
+<p>Также вы можете запустить приложение с поддержкой автоматической перезагрузки с помощью задачи <code>run</code> в <code>Makefile</code>:</p>
+<pre>
+$ make run
+</pre>
+<h2>Структура проекта</h2>
+<p>Весь код предназначен для редактирования. Вы можете изменять и адаптировать его под свои потребности.</p>
+<table>
+<tbody>
+<tr>
+<td><strong><code>cmd/api</code></strong></td>
+<td>Ваш специфичный для приложения код (обработчики, маршруты, промежуточные слои, вспомогательные функции) для работы с HTTP-запросами и ответами.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/errors.go</code></td>
+<td>Содержит вспомогательные функции для управления и обработки условий ошибок.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/handlers.go</code></td>
+<td>Содержит ваши обработчики HTTP-запросов.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/helpers.go</code></td>
+<td>Содержит вспомогательные функции для общих задач.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/main.go</code></td>
+<td>Точка входа в приложение. Отвечает за разбор настроек конфигурации, инициализацию зависимостей и запуск сервера. Начните здесь, когда изучаете код.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/middleware.go</code></td>
+<td>Содержит ваши промежуточные слои приложения.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/routes.go</code></td>
+<td>Содержит отображения маршрутов вашего приложения.</td>
+</tr>
+<tr>
+<td><code>↳ cmd/api/server.go</code></td>
+<td>Содержит вспомогательные функции для запуска и корректного завершения работы сервера.</td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td><strong><code>internal</code></strong></td>
+<td>Содержит различные вспомогательные пакеты, используемые приложением.</td>
+</tr>
+<tr>
+<td><code>↳ internal/env</code></td>
+<td>Содержит вспомогательные функции для чтения настроек конфигурации из переменных окружения.</td>
+</tr>
+<tr>
+<td><code>↳ internal/request/</code></td>
+<td>Содержит вспомогательные функции для декодирования JSON-запросов.</td>
+</tr>
+<tr>
+<td><code>↳ internal/response/</code></td>
+<td>Содержит вспомогательные функции для отправки JSON-ответов.</td>
+</tr>
+<tr>
+<td><code>↳ internal/validator/</code></td>
+<td>Содержит вспомогательные функции для валидации.</td>
+</tr>
+<tr>
+<td><code>↳ internal/version/</code></td>
+<td>Содержит определение номера версии приложения.</td>
+</tr>
+</tbody>
+</table>
+<h2>Настройки конфигурации</h2>
+<p>Настройки конфигурации управляются с использованием переменных окружения, которые считываются в вашем приложении в функции <code>run()</code> в файле <code>main.go</code>.</p>
+<p>Вы можете попробовать это, установив переменную окружения <code>HTTP_PORT</code> для настройки порта сети, который слушает сервер:</p>
+<pre>
+$ export HTTP_PORT="9999"
+$ go run ./cmd/api
+</pre>
+<p>Не стесняйтесь адаптировать функцию <code>run()</code>, чтобы разбирать дополнительные переменные окружения и сохранять их значения в структуре <code>config</code>. Приложение использует вспомогательные функции пакета <code>internal/env</code> для разбора значений переменных окружения или возврата значения по умолчанию, если соответствующая переменная окружения не установлена. Включены функции <code>env.GetString()</code>, <code>env.GetInt()</code> и <code>env.GetBool()</code> для чтения строковых, целочисленных и булевых значений из переменных окружения. Вы также можете добавить любые дополнительные вспомогательные функции, которые вам нужны.</p>
+<h2>Создание новых обработчиков</h2>
+<p>Обработчики определены как методы <code>http.HandlerFunc</code> в структуре <code>application</code>. Они имеют следующий шаблон:</p>
+<pre>
+func (app *application) yourHandler(w http.ResponseWriter, r *http.Request) {
+    // Ваша логика обработчика...
+}
+</pre>
+<p>Обработчики определены в файле <code>cmd/api/handlers.go</code>. Для небольших приложений нормально, если все обработчики будут находиться в этом файле. Для крупных приложений (10+ обработчиков) вы можете захотеть разделить их на отдельные файлы.</p>
+<h2>Зависимости обработчика</h2>
+<p>Любые зависимости ваших обработчиков должны быть инициализированы в функции <code>run()</code> в файле <code>cmd/api/main.go</code> и добавлены в структуру <code>application</code>. Все ваши обработчики, вспомогательные функции и промежуточные слои, определенные как методы в <code>application</code>, будут иметь к ним доступ.</p>
+<p>Вы можете увидеть пример этого в файле <code>cmd/api/main.go</code>, где мы инициализируем новый экземпляр <code>logger</code> и добавляем его в структуру <code>application</code>.</p>
+<h2>Создание новых маршрутов</h2>
+<p>Используется <a href="https://github.com/gorilla/mux">Gorilla mux</a> для маршрутизации. Маршруты определены в методе <code>routes()</code> файла <code>cmd/api/routes.go</code>. Например:</p>
+<pre>
+func (app *application) routes() http.Handler {
+    mux := mux.NewRouter()
+
+    mux.HandleFunc("/your/path", app.yourHandler).Methods("GET")
+
+    mux.Get("/your/path", app.yourHandler)
+
+    return mux
+}
+</pre>
+<p>Дополнительную информацию о Gorilla mux и примеры использования можно найти в <a href="https://github.com/gorilla/mux">официальной документации</a>.</p>
+<h2>Добавление промежуточных слоев</h2>
+<p>Промежуточные слои определены как методы структуры <code>application</code> в файле <code>cmd/api/middleware.go</code>. Не стесняйтесь добавлять свои. Они имеют следующий шаблон:</p>
+<pre>
+func (app *application) yourMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Ваша логика промежуточного слоя...
+        next.ServeHTTP(w, r)
+    })
+}
+</pre>
+<h2>Отправка JSON-ответов</h2>
+<p>JSON-ответы и определенный HTTP-статус могут быть отправлены с использованием функции <code>response.JSON()</code>. Параметр <code>data</code> может быть любым типом, поддающимся маршалингу в JSON.</p>
+<pre>
+func (app *application) yourHandler(w http.ResponseWriter, r *http.Request) {
+    data := map[string]string{"hello":  "world"}
+
+    err := response.JSON(w, http.StatusOK, data)
+    if err != nil {
+        app.serverError(w, r, err)
+    }
+}
+</pre>
+<p>С ответом также можно отправить определенные HTTP-заголовки:</p>
+<pre>
+func (app *application) yourHandler(w http.ResponseWriter, r *http.Request) {
+    data := map[string]string{"hello":  "world"}
+
+    headers := make(http.Header)
+    headers.Set("X-Server", "Go")
+
+    err := response.JSONWithHeaders(w, http.StatusOK, data, headers)
+    if err != нил {
+        app.serverError(w, r, err)
+    }
+}
+</pre>
+<h2>Декодирование JSON-запросов</h2>
+<p>HTTP-запросы, содержащие тело JSON, могут быть декодированы с использованием функции <code>request.DecodeJSON()</code>. Например, для декодирования JSON в структуру <code>input</code>:</p>
+<pre>
+func (app *application) yourHandler(w http.ResponseWriter, r *http.Request) {
+    var input struct {
+        Name string `json:"Name"`
+        Age  int    `json:"Age"`
+    }
+
+    err := request.DecodeJSON(w, r, &amp;input)
+    if err != nil {
+        app.badRequest(w, r, err)
+        return
+    }
+
+    ...
+}
+</pre>
+<p>Примечание: Целевой указатель декодирования, переданный в <code>request.DecodeJSON()</code> (в данном примере - <code>&amp;input</code>), должен быть ненулевым указателем.</p>
+<p>Функция <code>request.DecodeJSON()</code> возвращает дружественные, хорошо оформленные сообщения об ошибках, которые подходят для отправки их напрямую клиенту с использованием вспомогательной функции <code>app.badRequest()</code>.</p>
+<p>Также есть функция <code>request.DecodeJSONStrict()</code>, которая работает так же, как и <code>request.DecodeJSON()</code>, за исключением того, что она вернет ошибку, если запрос содержит поля JSON, которые не соответствуют ни одному имени в целевом указателе декодирования.</p>
+<h2>Валидация JSON-запросов</h2>
+<p>Пакет <code>internal/validator</code> включает в себя простой (но мощный) тип <code>validator.Validator</code>, который вы можете использовать для выполнения проверок валидации.</p>
+<p>Расширение предыдущего примера:</p>
+<pre>
+func (app *application) yourHandler(w http.ResponseWriter, r *http.Request) {
+    var input struct {
+        Name      string              `json:"Name"`
+        Age       int                 `json:"Age"`
+        Validator validator.Validator `json:"-"`
+    }
+
+    err := request.DecodeJSON(w, r, &amp;input)
+    if err != nil {
+        app.badRequest(w, r, err)
+        return
+    }
+
+    input.Validator.CheckField(input.Name != "", "Name", "Name is required")
+    input.Validator.CheckField(input.Age != 0, "Age", "Age is required")
+    input.Validator.CheckField(input.Age &gt;= 21, "Age", "Age must be 21 or over")
+
+    if input.Validator.HasErrors() {
+        app.failedValidation(w, r, input.Validator)
+        return
+    }
+
+    ...
+}
+</pre>
+<p>Вспомогательная функция <code>app.failedValidation()</code> отправит статусный код <code>422</code> вместе с любыми сообщениями об ошибках валидации. Для приведенного выше примера JSON-ответ будет выглядеть следующим образом:</p>
+<pre>
+{
+    "FieldErrors": {
+        "Age": "Age must be 21 or over",
+        "Name": "Name is required"
+    }
+}
+</pre>
+<p>В приведенном выше примере мы используем метод <code>CheckField()</code> для выполнения проверок валидации для конкретных полей. Вы также можете использовать метод <code>Check()</code> для выполнения проверки валидации, <em>не связанной с конкретным полем</em>. Например:</p>
+<pre>
+input.Validator.Check(input.Password == input.ConfirmPassword, "Passwords do not match")
+</pre>
+<p>Методы <code>validator.AddError()</code> и <code>validator.AddFieldError()</code> также позволяют добавлять ошибки валидации напрямую:</p>
+<pre>
+input.Validator.AddFieldError("Email", "This email address is already taken")
+input.Validator.AddError("Passwords do not match")
+</pre>
+<p>Файл <code>internal/validator/helpers.go</code> также содержит несколько вспомогательных функций, упрощающих валидации, которые не являются простыми операциями сравнения.</p>
+<table>
+<tbody>
+<tr>
+<td><code>NotBlank(value string)</code></td>
+<td>Проверить, что значение содержит хотя бы один непробельный символ.</td>
+</tr>
+<tr>
+<td><code>MinRunes(value string, n int)</code></td>
+<td>Проверить, что значение содержит хотя бы n рун.</td>
+</tr>
+<tr>
+<td><code>MaxRunes(value string, n int)</code></td>
+<td>Проверить, что значение содержит не более n рун.</td>
+</tr>
+<tr>
+<td><code>Between(value, min, max T)</code></td>
+<td>Проверить, что значение находится между значениями min и max включительно.</td>
+</tr>
+<tr>
+<td><code>Matches(value string, rx *regexp.Regexp)</code></td>
+<td>Проверить, что значение соответствует определенному регулярному выражению.</td>
+</tr>
+<tr>
+<td><code>In(value T, safelist ...T)</code></td>
+<td>Проверить, что значение находится в 'списке безопасности' определенных значений.</td>
+</tr>
+<tr>
+<td><code>AllIn(values []T, safelist ...T)</code></td>
+<td>Проверить, что все значения в срезе находятся в 'списке безопасности' определенных значений.</td>
+</tr>
+<tr>
+<td><code>NotIn(value T, blocklist ...T)</code></td>
+<td>Проверить, что значение не находится в 'списке блокировки' определенных значений.</td>
+</tr>
+<tr>
+<td><code>NoDuplicates(values []T)</code></td>
+<td>Проверить, что срез не содержит дублирующихся (повторяющихся) значений.</td>
+</tr>
+<tr>
+<td><code>IsEmail(value string)</code></td>
+<td>Проверить, что значение имеет формат действительного адреса электронной почты.</td>
+</tr>
+<tr>
+<td><code>IsURL(value string)</code></td>
+<td>Проверить, что значение имеет формат действительного URL.</td>
+</tr>
+</tbody>
+</table>
+<p>Например, вы можете использовать их в своем коде следующим образом:</p>
+<pre>
+input.Validator.Check(validator.IsEmail(input.Email), "Email is not a valid email address")
+input.Validator.Check(validator.MinRunes(input.Password, 10), "Password must be at least 10 characters long")
+input.Validator.Check(validator.Between(input.Age, 18, 99), "Age must be between 18 and 99")
+</pre>
+<p>Или даже встроить их в проверку полей:</p>
+<pre>
+input.Validator.CheckField(validator.IsEmail(input.Email), "Email", "Email is not a valid email address")
+input.Validator.CheckField(validator.MinRunes(input.Password, 10), "Password", "Password must be at least 10 characters long")
+input.Validator.CheckField(validator.Between(input.Age, 18, 99), "Age", "Age must be between 18 and 99")
+</pre>
+<p>Помните, что эти функции являются примерами и могут быть дополнены или изменены в соответствии с вашими потребностями.</p>
+<h2>Логирование</h2>
+<p>Логирование выполняется с использованием пакета <a href="https://pkg.go.dev/go.uber.org/zap">Zap</a>. Логгер доступен в структуре <code>application</code> как поле <code>infoLog</code> и <code>errorLog</code>. Вы можете использовать их для логирования информационных и ошибочных сообщений ваших обработчиков, промежуточных слоев и другого кода приложения.</p>
+<pre>
+app.infoLog.Println("Some information")
+app.errorLog.Println("Some error")
+</pre>
+<p>Обратите внимание, что логгеры предоставляют методы уровня логгирования (например, <code>Debug()</code>, <code>Info()</code>, <code>Error()</code>), которые могут использоваться для логирования сообщений с соответствующим уровнем логгирования. Пример:</p>
+<pre>
+app.infoLog.Info("Some information", zap.String("key", "value"))
+app.errorLog.Error("Some error", zap.String("key", "value"))
+</pre>
+<p>Подробная информация о библиотеке Zap и ее функциональных возможностях может быть найдена в <a href="https://pkg.go.dev/go.uber.org/zap">документации</a>.</p>
+<h2>Тестирование</h2>
+<p>В проекте уже включен простой фреймворк тестирования с использованием <a href="https://pkg.go.dev/github.com/matryer/is">matryer/is</a>. Вы можете использовать его для создания юнит-тестов для своего кода. Все тесты располагаются в каталоге <code>cmd/api</code> и имеют суффикс <code>_test.go</code>.</p>
+<p>Пример:</p>
+<pre>
+func TestAddTwoNumbers(t *testing.T) {
+    is := is.New(t)
+
+    result := addTwoNumbers(2, 3)
+    is.Equal(result, 5)
+}
+</pre>
+<p>Вы можете выполнить тесты, используя команду <code>go test ./...</code> в корневой директории проекта. Вы также можете добавить флаг <code>-v</code> для более подробного вывода.</p>
+<p>Вы можете добавить свои собственные тесты и расширять их в соответствии с потребностями вашего приложения.</p>
+<h2>Документация</h2>
+<p>Вы можете создать документацию для вашего кода, используя комментарии. Генерация документации в формате HTML выполняется с использованием утилиты <a href="https://pkg.go.dev/golang.org/x/tools/cmd/godoc">godoc</a>. Пример:</p>
+<pre>
+$ godoc -http :6060
+</pre>
+<p>После выполнения этой команды вы сможете просматривать документацию для своего кода, открыв веб-браузер и переходя по адресу <code>http://localhost:6060/pkg</code>.</p>
+<h2>Зависимости</h2>
+<p>Проект включает в себя файл <code>go.mod</code>, который содержит информацию о зависимостях проекта. Вы можете использовать команду <code>go mod tidy</code>, чтобы обновить зависимости до их последних версий:</p>
+<pre>
+$ go mod tidy
+</pre>
+<p>После выполнения этой команды создастся или обновится файл <code>go.sum</code>, содержащий хеш-суммы для зависимостей.</p>
+
+<h2>Лицензия</h2>
+<p>Этот проект распространяется под лицензией MIT.</p>
+</div>
+</body>
+</html>
